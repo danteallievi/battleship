@@ -5,8 +5,6 @@
 //   this.col4 = col4;
 // }
 
-let a = document.querySelector('#whose-go');
-
 class Table {
   // Base constructor
   constructor(A, B, C, D, E, F, G, H, I, J) {
