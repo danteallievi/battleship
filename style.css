@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  background-color: #f3f3f3;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+.title {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  gap: 2px;
+  margin: 2vmin;
+  display: grid;
+  background-color: hsl(200, 100%, 50%);
+  grid-template-rows: repeat(10, 4.6vmin);
+  grid-template-columns: repeat(10, 4.6vmin);
+}
+
+.grid-display,
+.ship1 div {
+  color: red;
+  height: 10px;
+  width: 10px;
+}
