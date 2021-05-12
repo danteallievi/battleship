@@ -1,43 +1,137 @@
-// function Table(col1, col2, col3, col4) {
-//   this.col1 = col1;
-//   this.col2 = col2;
-//   this.col3 = col3;
-//   this.col4 = col4;
-// }
+// : DOM elements
+const userGrid = document.querySelector('.grid-user');
+const computerGrid = document.querySelector('.grid-computer');
+const displayGrid = document.querySelector('.grid-display');
+const ships = document.querySelectorAll('.ships');
+const destroyer = document.querySelector('.destroyer-container');
+const submarine = document.querySelector('.submarine-container');
+const cruiser = document.querySelector('.cruiser-container');
+const battleship = document.querySelector('.battleship-container');
+const carrier = document.querySelector('.carrier-container');
+const startButton = document.querySelector('#start');
+const rotateButton = document.querySelector('#rotate');
+const turnDisplay = document.querySelector('#whose-go');
+const infoDisplay = document.querySelector('#info');
 
-class Table {
-  // Base constructor
-  constructor(A, B, C, D, E, F, G, H, I, J) {
-    this.A = A;
-    this.B = B;
-    this.C = C;
-    this.D = D;
-    this.E = E;
-    this.F = F;
-    this.G = G;
-    this.H = H;
-    this.I = I;
-    this.J = J;
-  }
-  static draw() {
-    console.table(board);
-  }
+// : Usefull variables
+const width = 10;
+const userSquares = [];
+const computerSquares = [];
+let isHorizontal = true;
 
-  static hitted(col, row) {
-    board[col][row] = '🔥';
-
-    return console.table(board);
+// Create board
+function createBoard(grid, squares) {
+  for (let i = 0; i < width * width; i++) {
+    const square = document.createElement('div');
+    square.dataset.id = i;
+    grid.appendChild(square);
+    squares.push(square);
   }
 }
 
-let row0 = new Table(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-let row1 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row2 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row3 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row4 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row5 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row6 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row7 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row8 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let row9 = new Table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-let board = [row0, row1, row2, row3, row4, row5, row6, row7, row8, row9];
+createBoard(userGrid, userSquares);
+createBoard(computerGrid, computerSquares);
+
+// Ships
+const shipArray = [
+  {
+    name: 'destroyer',
+    directions: [
+      [0, 1],
+      [0, width],
+    ],
+  },
+  {
+    name: 'submarine',
+    directions: [
+      [0, 1, 2],
+      [0, width, width * 2],
+    ],
+  },
+  {
+    name: 'cruiser',
+    directions: [
+      [0, 1, 2],
+      [0, width, width * 2],
+    ],
+  },
+  {
+    name: 'battleship',
+    directions: [
+      [0, 1, 2, 3],
+      [0, width, width * 2, width * 3],
+    ],
+  },
+  {
+    name: 'carrier',
+    directions: [
+      [0, 1, 2, 3, 4],
+      [0, width, width * 2, width * 3, width * 4],
+    ],
+  },
+];
+
+// Draw the random computer ships
+function generate(ship) {
+  // Random vertical or horizontal (directions[ran])
+  let randomDirection = Math.floor(Math.random() * ship.directions.length);
+  let current = ship.directions[randomDirection];
+
+  if (randomDirection === 0) direction = 1;
+  if (randomDirection === 1) direction = 10;
+
+  let randomStart = Math.abs(
+    Math.floor(
+      Math.random() * computerSquares.length -
+        ship.directions[0].length * direction
+    )
+  );
+
+  const isTaken = current.some(index => {
+    computerSquares[randomStart + index].classList.contains('taken');
+  });
+  const isAtRightEdge = current.some(
+    index => (randomStart + index) % width === width - 1
+  );
+  const isAtLeftEdge = current.some(
+    index => (randomStart + index) % width === 0
+  );
+
+  if (!isTaken && !isAtRightEdge && !isAtLeftEdge) {
+    current.forEach(index =>
+      computerSquares[randomStart + index].classList.add('taken', ship.name)
+    );
+  } else {
+    generate(ship);
+  }
+}
+
+generate(shipArray[0]);
+generate(shipArray[1]);
+generate(shipArray[2]);
+generate(shipArray[3]);
+generate(shipArray[4]);
+
+// Rotate ships
+
+function rotate() {
+  if (isHorizontal) {
+    destroyer.classList.toggle('destroyer-container-vertical');
+    submarine.classList.toggle('submarine-container-vertical');
+    cruiser.classList.toggle('cruiser-container-vertical');
+    battleship.classList.toggle('battleship-container-vertical');
+    carrier.classList.toggle('carrier-container-vertical');
+    isHorizontal = false;
+    return;
+  }
+  if (!isHorizontal) {
+    destroyer.classList.toggle('destroyer-container-vertical');
+    submarine.classList.toggle('submarine-container-vertical');
+    cruiser.classList.toggle('cruiser-container-vertical');
+    battleship.classList.toggle('battleship-container-vertical');
+    carrier.classList.toggle('carrier-container-vertical');
+    isHorizontal = true;
+    return;
+  }
+}
+rotateButton.addEventListener('click', rotate);
