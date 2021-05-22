@@ -2,7 +2,7 @@
 const userGrid = document.querySelector('.grid-user');
 const computerGrid = document.querySelector('.grid-computer');
 const displayGrid = document.querySelector('.grid-display');
-const ships = document.querySelectorAll('.ships');
+const ships = document.querySelectorAll('.ship');
 const destroyer = document.querySelector('.destroyer-container');
 const submarine = document.querySelector('.submarine-container');
 const cruiser = document.querySelector('.cruiser-container');
@@ -19,7 +19,7 @@ const userSquares = [];
 const computerSquares = [];
 let isHorizontal = true;
 
-// Create board
+// : Create board
 function createBoard(grid, squares) {
   for (let i = 0; i < width * width; i++) {
     const square = document.createElement('div');
@@ -37,7 +37,9 @@ const shipArray = [
   {
     name: 'destroyer',
     directions: [
+      // Horizontal
       [0, 1],
+      // Vertical = 0, 10
       [0, width],
     ],
   },
@@ -71,15 +73,19 @@ const shipArray = [
   },
 ];
 
-// Draw the random computer ships
+// : Draw the random computer ships
 function generate(ship) {
   // Random vertical or horizontal (directions[ran])
   let randomDirection = Math.floor(Math.random() * ship.directions.length);
+  // shipArray.directions[vertical || horizontal]
   let current = ship.directions[randomDirection];
 
+  // Horizontal
   if (randomDirection === 0) direction = 1;
+  // Vertical
   if (randomDirection === 1) direction = 10;
 
+  // Num between 0/99 * ship length * horizontal/vertical
   let randomStart = Math.abs(
     Math.floor(
       Math.random() * computerSquares.length -
@@ -87,17 +93,24 @@ function generate(ship) {
     )
   );
 
-  const isTaken = current.some(index => {
-    computerSquares[randomStart + index].classList.contains('taken');
-  });
+  // Not overlay the ships
+  const isTaken = current.some(index =>
+    computerSquares[randomStart + index].classList.contains('taken')
+  );
+
+  // If the remainder is  === 9
   const isAtRightEdge = current.some(
     index => (randomStart + index) % width === width - 1
   );
+
+  // If the remainder is  === 0
   const isAtLeftEdge = current.some(
     index => (randomStart + index) % width === 0
   );
 
+  //TODO : FIX THE COL10
   if (!isTaken && !isAtRightEdge && !isAtLeftEdge) {
+    // sacar &&!left
     current.forEach(index =>
       computerSquares[randomStart + index].classList.add('taken', ship.name)
     );
@@ -112,8 +125,7 @@ generate(shipArray[2]);
 generate(shipArray[3]);
 generate(shipArray[4]);
 
-// Rotate ships
-
+// : Rotate ships button
 function rotate() {
   if (isHorizontal) {
     destroyer.classList.toggle('destroyer-container-vertical');
@@ -135,3 +147,53 @@ function rotate() {
   }
 }
 rotateButton.addEventListener('click', rotate);
+
+// : User ships movement
+ships.forEach(ship => ship.addEventListener('dragstart', dragStart));
+userSquares.forEach(square => square.addEventListener('dragstart', dragStart));
+userSquares.forEach(square => square.addEventListener('dragover', dragOver));
+userSquares.forEach(square => square.addEventListener('dragenter', dragEnter));
+userSquares.forEach(square => square.addEventListener('dragleave', dragLeave));
+userSquares.forEach(square => square.addEventListener('drop', dragDrop));
+userSquares.forEach(square => square.addEventListener('dragend', dragEnd));
+
+let selectedShipNameWithIndex;
+let draggedShip;
+let draggedShipLength;
+
+ships.forEach(ship =>
+  ship.addEventListener('mousedown', e => {
+    selectedShipNameWithIndex = e.target.id;
+    console.log(selectedShipNameWithIndex);
+  })
+);
+
+function dragStart() {
+  draggedShip = this;
+  draggedShipLength = draggedShip.length;
+  console.log(draggedShip);
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function dragEnter(e) {
+  e.preventDefault();
+}
+
+function dragLeave() {
+  // console.log('dragLeave');
+}
+
+function dragDrop() {
+  let shipNameWithLastId = draggedShip.lastChild.id;
+  let shipClass = shipNameWithLastId.slice(0, -2);
+  console.log(shipClass);
+  let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
+  let shipLastId = lastShipIndex + parseInt(this.dataset.id);
+
+  selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1));
+}
+
+function dragEnd() {}
