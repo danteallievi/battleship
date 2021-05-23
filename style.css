@@ -152,6 +152,14 @@ body {
   background-color: green;
 }
 
+.boom {
+  background-color: red;
+}
+
+.miss {
+  background-color: blue;
+}
+
 /* .grid {
   gap: 2px;
   margin: 2vmin;
