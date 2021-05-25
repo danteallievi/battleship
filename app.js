@@ -8,6 +8,7 @@ const submarine = document.querySelector('.submarine-container');
 const cruiser = document.querySelector('.cruiser-container');
 const battleship = document.querySelector('.battleship-container');
 const carrier = document.querySelector('.carrier-container');
+const setupBtn = document.querySelector('.setup-buttons');
 const startButton = document.querySelector('#start');
 const rotateButton = document.querySelector('#rotate');
 const turnDisplay = document.querySelector('#whose-go');
@@ -244,20 +245,27 @@ function dragEnd() {
 
 // : Game logic
 function playGame() {
+  const unplacedShips = displayGrid.childElementCount;
   if (isGameOver) return;
-  if (currentPlayer === 'user') {
-    turnDisplay.innerHTML = 'You Go';
 
-    computerSquares.forEach((square) =>
-      square.addEventListener('click', (e) => {
-        revealSquare(square);
-      })
-    );
-  }
-  if (currentPlayer === 'computer') {
-    turnDisplay.innerHTML = 'Computers Go';
+  if (!unplacedShips) {
+    setupBtn.style.display = 'none';
+    if (currentPlayer === 'user') {
+      turnDisplay.innerHTML = 'You Go';
 
-    setTimeout(computerGo, 1000);
+      computerSquares.forEach((square) =>
+        square.addEventListener('click', (e) => {
+          revealSquare(square);
+        })
+      );
+    }
+    if (currentPlayer === 'computer') {
+      turnDisplay.innerHTML = 'Computers Go';
+
+      setTimeout(computerGo, 500);
+    }
+  } else {
+    turnDisplay.innerHTML = 'Place all your ships for the battle!';
   }
 }
 startButton.addEventListener('click', playGame);
@@ -269,23 +277,28 @@ let battleshipCount = 0;
 let carrierCount = 0;
 
 function revealSquare(square) {
-  if (!square.classList.contains('boom')) {
-    if (square.classList.contains('destroyer')) destroyerCount++;
-    if (square.classList.contains('submarine')) submarineCount++;
-    if (square.classList.contains('cruiser')) cruiserCount++;
-    if (square.classList.contains('battleship')) battleshipCount++;
-    if (square.classList.contains('carrier')) carrierCount++;
-  }
-
-  if (square.classList.contains('taken')) {
-    square.classList.add('boom');
+  if (square.classList.contains('boom') || square.classList.contains('miss')) {
+    infoDisplay.innerHTML = 'Square already used!';
   } else {
-    square.classList.add('miss');
-  }
+    if (!square.classList.contains('boom')) {
+      if (square.classList.contains('destroyer')) destroyerCount++;
+      if (square.classList.contains('submarine')) submarineCount++;
+      if (square.classList.contains('cruiser')) cruiserCount++;
+      if (square.classList.contains('battleship')) battleshipCount++;
+      if (square.classList.contains('carrier')) carrierCount++;
+    }
 
-  checkForWins();
-  currentPlayer = 'computer';
-  playGame();
+    if (square.classList.contains('taken')) {
+      square.classList.add('boom');
+    } else {
+      square.classList.add('miss');
+    }
+
+    infoDisplay.innerHTML = '';
+    checkForWins();
+    currentPlayer = 'computer';
+    playGame();
+  }
 }
 
 let cpuDestroyerCount = 0;
@@ -298,15 +311,31 @@ function computerGo() {
   let random = Math.floor(Math.random() * userSquares.length);
 
   if (!userSquares[random].classList.contains('boom')) {
-    userSquares[random].classList.add('boom');
-    if (userSquares[random].classList.contains('destroyer'))
+    userSquares[random].classList.add('miss');
+
+    if (userSquares[random].classList.contains('destroyer')) {
+      userSquares[random].classList.add('boom');
       cpuDestroyerCount++;
-    if (userSquares[random].classList.contains('submarine'))
+    }
+    if (userSquares[random].classList.contains('submarine')) {
+      userSquares[random].classList.add('boom');
       cpuSubmarineCount++;
-    if (userSquares[random].classList.contains('cruiser')) cpuCruiserCount++;
-    if (userSquares[random].classList.contains('battleship'))
+    }
+    if (userSquares[random].classList.contains('cruiser')) {
+      userSquares[random].classList.add('boom');
+
+      cpuCruiserCount++;
+    }
+    if (userSquares[random].classList.contains('battleship')) {
+      userSquares[random].classList.add('boom');
+
       cpuBattleshipCount++;
-    if (userSquares[random].classList.contains('carrier')) cpuCarrierCount++;
+    }
+    if (userSquares[random].classList.contains('carrier')) {
+      userSquares[random].classList.add('boom');
+
+      cpuCarrierCount++;
+    }
     checkForWins();
   } else {
     computerGo();
