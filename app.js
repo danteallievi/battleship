@@ -277,27 +277,32 @@ let battleshipCount = 0;
 let carrierCount = 0;
 
 function revealSquare(square) {
-  if (square.classList.contains('boom') || square.classList.contains('miss')) {
-    infoDisplay.innerHTML = 'Square already used!';
-  } else {
-    if (!square.classList.contains('boom')) {
-      if (square.classList.contains('destroyer')) destroyerCount++;
-      if (square.classList.contains('submarine')) submarineCount++;
-      if (square.classList.contains('cruiser')) cruiserCount++;
-      if (square.classList.contains('battleship')) battleshipCount++;
-      if (square.classList.contains('carrier')) carrierCount++;
-    }
-
-    if (square.classList.contains('taken')) {
-      square.classList.add('boom');
+  if (!isGameOver) {
+    if (
+      square.classList.contains('boom') ||
+      square.classList.contains('miss')
+    ) {
+      infoDisplay.innerHTML = 'Square already used!';
     } else {
-      square.classList.add('miss');
-    }
+      if (!square.classList.contains('boom')) {
+        if (square.classList.contains('destroyer')) destroyerCount++;
+        if (square.classList.contains('submarine')) submarineCount++;
+        if (square.classList.contains('cruiser')) cruiserCount++;
+        if (square.classList.contains('battleship')) battleshipCount++;
+        if (square.classList.contains('carrier')) carrierCount++;
+      }
 
-    infoDisplay.innerHTML = '';
-    checkForWins();
-    currentPlayer = 'computer';
-    playGame();
+      if (square.classList.contains('taken')) {
+        square.classList.add('boom');
+      } else {
+        square.classList.add('miss');
+      }
+
+      infoDisplay.innerHTML = '';
+      checkForWins();
+      currentPlayer = 'computer';
+      playGame();
+    }
   }
 }
 
@@ -414,7 +419,4 @@ function checkForWins() {
 function gameOver() {
   isGameOver = true;
   startButton.removeEventListener('click', playGame);
-  computerSquares.forEach((square) =>
-    square.removeEventListener('click', revealSquare(square))
-  );
 }
