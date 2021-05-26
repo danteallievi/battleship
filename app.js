@@ -189,15 +189,9 @@ function dragEnter(e) {
   e.preventDefault();
 }
 
-function dragLeave() {
-  // console.log('dragLeave');
-}
-
 function dragDrop() {
   let shipNameWithLastId = draggedShip.lastChild.id;
   let shipClass = shipNameWithLastId.slice(0, -2);
-  console.log(shipClass);
-
   let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
   let shipLastId = lastShipIndex + parseInt(this.dataset.id);
 
@@ -237,10 +231,6 @@ function dragDrop() {
   } else return;
 
   displayGrid.removeChild(draggedShip);
-}
-
-function dragEnd() {
-  console.log('dragend');
 }
 
 // : Game logic
