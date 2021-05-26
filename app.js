@@ -189,6 +189,14 @@ function dragEnter(e) {
   e.preventDefault();
 }
 
+function dragLeave() {
+  // console.log('dragLeave');
+}
+
+function dragEnd() {
+  // console.log('dragend');
+}
+
 function dragDrop() {
   let shipNameWithLastId = draggedShip.lastChild.id;
   let shipClass = shipNameWithLastId.slice(0, -2);
