@@ -395,8 +395,8 @@ function checkForWins() {
       carrierCount ===
     50
   ) {
-    infoDisplay.innerHTML = 'You win';
     gameOver();
+    infoDisplay.innerHTML = 'You win!';
   }
   if (
     cpuDestroyerCount +
@@ -406,12 +406,15 @@ function checkForWins() {
       carrierCount ===
     50
   ) {
-    infoDisplay.innerHTML = 'Computer win';
     gameOver();
+    infoDisplay.innerHTML = 'Computer win!';
   }
 }
 
 function gameOver() {
   isGameOver = true;
   startButton.removeEventListener('click', playGame);
+  computerSquares.forEach((square) =>
+    square.removeEventListener('click', revealSquare(square))
+  );
 }
